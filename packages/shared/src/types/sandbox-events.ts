@@ -2,6 +2,7 @@ import { z } from "zod";
 import { recordSchema } from "./artifacts";
 import { sessionDiffBaselineRepositorySchema } from "./session-diffs";
 import { resolvedSessionAttachmentsSchema } from "./session-attachments";
+import { githubAutofixOriginSchema } from "./github-autofix";
 
 const gitSyncStatusSchema = z.enum(["pending", "in_progress", "completed", "failed"]);
 export type GitSyncStatus = z.infer<typeof gitSyncStatusSchema>;
@@ -173,14 +174,7 @@ export const sandboxEventSchema = z.discriminatedUnion("type", [
         avatar: z.string().optional(),
       })
       .optional(),
-    autofix: z
-      .object({
-        feedbackKind: z.enum(["pr_comment", "review"]),
-        authorType: z.enum(["human", "bot"]),
-        pullRequestNumber: z.number().int().positive(),
-        feedbackUrl: z.url(),
-      })
-      .optional(),
+    origin: githubAutofixOriginSchema.optional(),
     // Attachment metadata only — never inline content, which would bloat the
     // events table and every broadcast. attachmentId lets clients stream attachments.
     attachments: resolvedSessionAttachmentsSchema.optional(),
