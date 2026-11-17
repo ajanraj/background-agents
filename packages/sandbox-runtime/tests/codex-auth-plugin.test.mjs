@@ -118,6 +118,7 @@ test("restores known prices and filters retired Codex models after the built-in 
       assert.equal(apiKeyModels, provider.models);
 
       const priced = await plugin.provider.models(provider, { auth: { type: "oauth" } });
+      for (const id of gpt6Ids) assert.ok(priced[id], `${id} should stay available with OAuth`);
       assert.equal(priced["gpt-6-astra"].cost.input, 12);
       assert.equal(priced["gpt-6-sol"].cost.cache.read, 0.3);
       assert.equal(priced["gpt-6-luna"].cost.output, 0.6);
